@@ -3,39 +3,34 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const { isEmpty } = require("validator");
 
-// controller function to create new user (registration);
-const registerUser = async (req, res) => {
+// controller function to create new user parent (registration);
+const registerParent = async (req, res) => {
   const errorObject = {};
   try {
-    const { firstName, lastName, email, gradeLevel, password, testRecord } =
-      req.body;
+    const { firstName, lastName, email, password } = req.body;
 
     //--------password plain text => bcrypt.genSalt() + bcrypt.hash() = passwordHash ------
     // Generate a random salt and hash the password using bcrypt;
     const salt = await bcrypt.genSalt(10);
     const hash = await bcrypt.hash(password, salt);
 
-    // create new user data
-    const userInfo = {
+    // create new user parent data
+    const userParentInfo = {
       firstName: firstName,
       lastName: lastName,
       email: email,
-      gradeLevel: gradeLevel,
       passwordHash: hash,
-      testRecord: testRecord,
     };
 
     if (isEmpty(firstName)) {
       errorObject.firstName = "First name is required";
     } else if (isEmpty(lastName)) {
       errorObject.lastName = "Last name is required";
-    } else if (isEmpty(gradeLevel)) {
-      errorObject.gradeLevel = "Grade level is required";
     }
 
     // create a new User instance and save it to the database
-    const newUser = await new User(userInfo); // grab data;
-    await newUser.save(); // save to database
+    const newUserParent = await new Parent(userParentInfo); // grab data;
+    await newUserParent.save(); // save to database
     res.status(200).json({ success: true });
   } catch (error) {
     console.log(error);
@@ -60,7 +55,7 @@ const loginUser = async (req, res) => {
   try {
     const { email, password } = req.body;
     // Find the user with the given email in the database
-    const foundUser = await User.findOne({ email: email });
+    const foundUser = await Parent.findOne({ email: email });
 
     // If user not found or password does not match, return an error response
     if (!foundUser) {
@@ -109,7 +104,7 @@ const validateUser = async (req, res) => {
   try {
     const decodedToken = res.locals.decodedToken;
     // Find the user in the database using the decoded user ID from the JWT
-    const findUser = await User.findOne({ _id: decodedToken.userId });
+    const findUser = await Parent.findOne({ _id: decodedToken.userId });
 
     if (!findUser) {
       res.status(401).json({
@@ -124,17 +119,16 @@ const validateUser = async (req, res) => {
       _id: findUser._id,
       name: `${findUser.firstName} ${findUser.lastName}`,
       email: findUser.email,
-      gradeLevel: findUser.gradeLevel,
-      testRecord: findUser.testRecord,
+      student: findUser.student,
     });
   } catch (error) {
     res.status(500).json({ success: false, message: "error", error: error });
   }
 };
 
-const getAllUsers = async (req, res) => {
+const getAllUsersParents = async (req, res) => {
   try {
-    const allUsers = await User.find({});
+    const allUsers = await Parent.find({});
     res.status(200).json({ success: true, data: allUsers });
   } catch (error) {
     console.log(error);
@@ -147,7 +141,7 @@ const getUser = async (req, res) => {
     const userId = req.params.id; // Get the user's ID from the request parameters
 
     // Find the user by ID
-    const user = await User.findById(userId);
+    const user = await Parent.findById(userId);
 
     if (!user) {
       return res.status(404).json({
@@ -164,8 +158,7 @@ const getUser = async (req, res) => {
         firstName: user.firstName,
         lastName: user.lastName,
         email: user.email,
-        gradeLevel: user.gradeLevel,
-        testRecord: user.testRecord,
+        student: user.student,
       },
     });
   } catch (error) {
@@ -180,7 +173,7 @@ const deleteUser = async (req, res) => {
     const userId = req.params.id; // Get the user's ID from the request parameters
 
     // Wait for the database to delete the user by its ID
-    const user = await User.findByIdAndDelete(userId);
+    const user = await Parent.findByIdAndDelete(userId);
 
     if (!user) {
       return res.status(404).json({
@@ -201,10 +194,10 @@ const deleteUser = async (req, res) => {
 };
 
 module.exports = {
-  registerUser,
+  registerParent,
   loginUser,
   validateUser,
-  getAllUsers,
+  getAllUsersParents,
   getUser,
   deleteUser,
 };
