@@ -3,7 +3,6 @@ const { v4: uuid } = require("uuid");
 
 const studentSchema = new mongoose.Schema({
   _id: { type: String, default: uuid },
-  parentOwner: { type: String, ref: "parent", required: true },
   firstName: { type: String, required: true },
   lastName: { type: String, required: true },
   gradeLevel: {

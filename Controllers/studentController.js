@@ -1,9 +1,10 @@
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const { isEmpty } = require("validator");
+const Student = require("../Model/Student");
 
 // controller function to create new user (registration);
-const registerUser = async (req, res) => {
+const registerStudent = async (req, res) => {
   const errorObject = {};
   try {
     const { firstName, lastName, email, gradeLevel, password, testRecord } =
@@ -33,7 +34,7 @@ const registerUser = async (req, res) => {
     }
 
     // create a new User instance and save it to the database
-    const newUser = await new User(userInfo); // grab data;
+    const newUser = await new Student(userInfo); // grab data;
     await newUser.save(); // save to database
     res.status(200).json({ success: true });
   } catch (error) {
@@ -55,11 +56,11 @@ const registerUser = async (req, res) => {
 };
 
 // Controller function for user login
-const loginUser = async (req, res) => {
+const loginStudent = async (req, res) => {
   try {
     const { email, password } = req.body;
     // Find the user with the given email in the database
-    const foundUser = await User.findOne({ email: email });
+    const foundUser = await Student.findOne({ email: email });
 
     // If user not found or password does not match, return an error response
     if (!foundUser) {
@@ -108,7 +109,7 @@ const validateUser = async (req, res) => {
   try {
     const decodedToken = res.locals.decodedToken;
     // Find the user in the database using the decoded user ID from the JWT
-    const findUser = await User.findOne({ _id: decodedToken.userId });
+    const findUser = await Student.findOne({ _id: decodedToken.userId });
 
     if (!findUser) {
       res.status(401).json({
@@ -131,9 +132,9 @@ const validateUser = async (req, res) => {
   }
 };
 
-const getAllUsers = async (req, res) => {
+const getAllUserStudents = async (req, res) => {
   try {
-    const allUsers = await User.find({});
+    const allUsers = await Student.find({});
     res.status(200).json({ success: true, data: allUsers });
   } catch (error) {
     console.log(error);
@@ -141,12 +142,12 @@ const getAllUsers = async (req, res) => {
   }
 };
 
-const getUser = async (req, res) => {
+const getStudentById = async (req, res) => {
   try {
     const userId = req.params.id; // Get the user's ID from the request parameters
 
     // Find the user by ID
-    const user = await User.findById(userId);
+    const user = await Student.findById(userId);
 
     if (!user) {
       return res.status(404).json({
@@ -179,7 +180,7 @@ const deleteUser = async (req, res) => {
     const userId = req.params.id; // Get the user's ID from the request parameters
 
     // Wait for the database to delete the user by its ID
-    const user = await User.findByIdAndDelete(userId);
+    const user = await Student.findByIdAndDelete(userId);
 
     if (!user) {
       return res.status(404).json({
@@ -200,10 +201,10 @@ const deleteUser = async (req, res) => {
 };
 
 module.exports = {
-  registerUser,
-  loginUser,
+  registerStudent,
+  loginStudent,
   validateUser,
-  getAllUsers,
-  getUser,
+  getAllUserStudents,
+  getStudentById,
   deleteUser,
 };

@@ -136,7 +136,7 @@ const getAllUsersParents = async (req, res) => {
   }
 };
 
-const getUser = async (req, res) => {
+const getParentById = async (req, res) => {
   try {
     const userId = req.params.id; // Get the user's ID from the request parameters
 
@@ -198,6 +198,6 @@ module.exports = {
   loginUser,
   validateUser,
   getAllUsersParents,
-  getUser,
+  getParentById,
   deleteUser,
 };
