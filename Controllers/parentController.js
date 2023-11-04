@@ -1,4 +1,5 @@
 const Parent = require("../Model/Parent");
+const Student = require("../Model/Student");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const { isEmpty } = require("validator");
@@ -119,10 +120,59 @@ const validateUser = async (req, res) => {
       _id: findUser._id,
       name: `${findUser.firstName} ${findUser.lastName}`,
       email: findUser.email,
-      student: findUser.student,
+      studentChild: findUser.studentChild,
     });
   } catch (error) {
     res.status(500).json({ success: false, message: "error", error: error });
+  }
+};
+
+// Controller function to add a student to a parent
+const addStudentChild = async (req, res) => {
+  try {
+    const { firstName, lastName, email, gradeLevel, password, parentId } =
+      req.body;
+
+    // Hash the password
+    const salt = await bcrypt.genSalt(10);
+    const hash = await bcrypt.hash(password, salt);
+
+    // Create a new student
+    const newStudentChild = {
+      firstName: firstName,
+      lastName: lastName,
+      email: email,
+      gradeLevel: gradeLevel,
+      passwordHash: hash,
+    };
+
+    // Save the student to the database
+    const studentChild = await new Student(newStudentChild);
+
+    // save to database
+    await studentChild.save();
+
+    // Use findOneAndUpdate to add the student's ID to the parent's studentChild array
+    const updatedParent = await Parent.findOneAndUpdate(
+      { _id: parentId },
+      { $push: { studentChild: studentChild._id } },
+      { new: true } // Return the updated document
+    );
+
+    // If parent not found, return an error
+    if (!updatedParent) {
+      return res
+        .status(404)
+        .json({ success: false, message: "Parent not found" });
+    }
+
+    // Return success response
+    res
+      .status(200)
+      .json({ success: true, message: "Student added successfully" });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ success: false, message: "An error occurred" });
   }
 };
 
@@ -197,6 +247,7 @@ module.exports = {
   registerParent,
   loginUser,
   validateUser,
+  addStudentChild,
   getAllUsersParents,
   getParentById,
   deleteUser,

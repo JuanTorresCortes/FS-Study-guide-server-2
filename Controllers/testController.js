@@ -13,7 +13,7 @@ exports.uploadTest = async (req, res) => {
     }
 
     // Check for required fields in request body
-    if (!req.body.testTopic || !req.body.testGrade || !req.body.testKeyID) {
+    if (!req.body.testTopic || !req.body.grade || !req.body.testKey) {
       return res
         .status(400)
         .json({ success: false, message: "Missing required test fields." });
@@ -23,8 +23,8 @@ exports.uploadTest = async (req, res) => {
       // Prepare test data from the request body
       const testData = {
         testTopic: req.body.testTopic,
-        testGrade: req.body.testGrade,
-        testKeyID: req.body.testKeyID,
+        grade: req.body.grade,
+        testKey: req.body.testKey,
         pdfData: req.file.buffer,
       };
 

@@ -8,6 +8,7 @@ const {
   getParentById,
   deleteUser,
   validateUser,
+  addStudentChild,
 } = require("../Controllers/parentController");
 
 const { validateUserData } = require("../utils/validateUserData");
@@ -29,6 +30,10 @@ router.post("/login-user", validateUserData, loginUser);
 // validate
 // http://localhost:4000/parent/validate
 router.get("/validate", jwtValidate, validateUser);
+
+// add student child
+// http://localhost:4000/parent/add-student-child
+router.post("/add-student-child", addStudentChild);
 
 // get all users parents
 // http://localhost:4000/parent/get-all-user-parent

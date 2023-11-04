@@ -55,7 +55,7 @@ const registerStudent = async (req, res) => {
   }
 };
 
-// Controller function for user login
+// Controller function for user student login
 const loginStudent = async (req, res) => {
   try {
     const { email, password } = req.body;

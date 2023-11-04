@@ -1,6 +1,5 @@
 const mongoose = require("mongoose");
 const { v4: uuid } = require("uuid");
-const Student = require("../Model/Student");
 
 const parentSchema = new mongoose.Schema({
   _id: { type: String, default: uuid },
@@ -14,7 +13,7 @@ const parentSchema = new mongoose.Schema({
     unique: true,
   },
   passwordHash: { type: String, required: true },
-  student: [{ type: mongoose.Schema.Types.ObjectId, ref: "student" }],
+  studentChild: { type: [] },
 });
 
 const Parent = mongoose.model("parent", parentSchema);

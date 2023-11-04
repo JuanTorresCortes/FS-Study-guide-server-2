@@ -33,7 +33,7 @@ app.use(express.static(path.join(__dirname, "public")));
 
 app.use("/parent", parentRouter);
 app.use("/student", studentRouter);
-app.use("/tests", testsRouter);
+app.use("/test", testsRouter);
 app.use("/testTaken", testTakenRouter);
 
 // catch 404 and forward to error handler
